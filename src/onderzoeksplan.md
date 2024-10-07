@@ -1,6 +1,6 @@
 # Onderzoeksplan
 
-Doelgroep: Mede hbo-ict studenten en andere personen die al de nodige kennis hebben binnen de ICT en geïnteresseerd zijn in Kubernetes.
+Doelgroep: Mede HBO-ICT studenten
 
 ## Hoofdvraag
 
