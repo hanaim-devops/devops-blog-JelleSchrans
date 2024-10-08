@@ -16,7 +16,7 @@ Hoe kan ChaosKube worden ingezet om de robuustheid en veerkracht van Kubernetes-
 
 4. Hoe kunnen de resultaten van ChaosKube-simulaties worden geanalyseerd en gebruikt om de systeemarchitectuur te verbeteren? [OpenAI, 2021](https://chat.openai.com/)
 
-5. Welke best practices moeten worden gevolgd bij het integreren van ChaosKube in een DevOps-pipeline? [OpenAI, 2021](https://chat.openai.com/)
+5. Welke best practices moeten worden gevolgd bij het integreren van ChaosKube? [OpenAI, 2021](https://chat.openai.com/)
 
 ## Onderzoeksmethoden
 
