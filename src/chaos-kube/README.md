@@ -12,7 +12,16 @@ Momenteel ben ik bezig met de minor DevOps, en Chaos Engineering is een van de o
 - [Wordt een "Agent of Chaos" met ChaosKube](#wordt-een-agent-of-chaos-met-chaoskube)
   - [Principes van Chaos Engineering](#principes-van-chaos-engineering)
   - [ChaosKube](#chaoskube)
+    - [Filteren op labels](#filteren-op-labels)
+    - [Filteren op namespaces](#filteren-op-namespaces)
+    - [Filteren op namespace labels](#filteren-op-namespace-labels)
+    - [Filteren op OwnerReference's](#filteren-op-ownerreferences)
+    - [Filteren op pod-namen](#filteren-op-pod-namen)
+    - [Combineren van filters](#combineren-van-filters)
+    - [Opt-in annotaties](#opt-in-annotaties)
   - [Voordelen en uitdagingen](#voordelen-en-uitdagingen)
+    - [Voordelen](#voordelen)
+    - [Uitdagingen](#uitdagingen)
   - [Resultaten analyseren](#resultaten-analyseren)
   - [Best practices](#best-practices)
   - [Bronnen](#bronnen)
@@ -60,6 +69,68 @@ INFO[4804] terminating pod          name=nginx-701339712-51nt8 namespace=chaosku
 ```
 
 Uiteraard heb je ook de vrijheid om ChaosKube te configureren naar jouw wensen. Zo kun je bijvoorbeeld de namespace waarin ChaosKube actief is aanpassen, de interval waarmee ChaosKube pods verwijdert aanpassen en de pods die ChaosKube verwijdert filteren op basis van labels en annotations. Ook kan je dagen in een week of een jaar en momenten op een dag eruit filteren om het verwijderen van pods te beperken tot wat gewenst is (limit the chaos). [GitHub, 2023](https://github.com/linki/chaoskube/blob/master/README.md)
+
+Je kunt de zoekruimte van chaoskube beperken door gebruik te maken van verschillende filters, zoals labels, annotaties, namespaces en patronen voor het opnemen of uitsluiten van pod-namen. Dit helpt om gerichter chaos tests uit te voeren.
+
+### Filteren op labels
+
+Je kunt pods selecteren op basis van hun labels. Bijvoorbeeld, om alle pods te selecteren met het label app=mate, een willekeurig chaos-label en waarbij stage niet gelijk is aan production.
+
+```bash
+chaoskube --labels 'app=mate,chaos,stage!=production'
+```
+
+### Filteren op namespaces
+
+Je kunt ook pods filteren op specifieke namespaces. Bijvoorbeeld, om alleen pods in de default, testing en staging namespaces te targeten.
+
+```bash
+chaoskube --namespaces 'default,testing,staging'
+```
+
+### Filteren op namespace labels
+
+Als je namespaces wilt uitsluiten op basis van hun labels, zoals het label integration.
+
+```bash
+  chaoskube --namespace-labels '!integration'
+```
+
+### Filteren op OwnerReference's
+
+Je kunt target pods uitsluiten of selecteren op basis van hun OwnerReference's soort. Bijvoorbeeld, om DaemonSet en StatefulSet pods uit te sluiten of om alleen DaemonSet pods te selecteren.
+
+```bash
+  chaoskube --owner-kind '!DaemonSet,!StatefulSet'
+  chaoskube --owner-kind 'DaemonSet'
+```
+
+### Filteren op pod-namen
+
+Je kunt pods filteren op naam. Bijvoorbeeld, om alleen pods te selecteren waarvan de naam 'foo' of 'bar' bevat, en 'prod' te vermijden.
+
+```bash
+  chaoskube --included-pod-names 'foo|bar' --excluded-pod-names 'prod'
+```
+
+### Combineren van filters
+
+Filters kunnen gecombineerd worden om de zoekruimte verder te beperken. Bijvoorbeeld, om alleen pods te selecteren met bepaalde labels en annotaties, en tegelijkertijd pods uit te sluiten in de kube-system en production namespaces.
+
+```bash
+  chaoskube \
+    --labels 'app=mate,chaos,stage!=production' \
+    --annotations '!scheduler.alpha.kubernetes.io/critical-pod' \
+    --namespaces '!kube-system,!production'
+```
+
+### Opt-in annotaties
+
+Je kunt chaoskube configureren om alleen pods te beëindigen die een specifieke annotatie hebben, zoals chaos.alpha.kubernetes.io/enabled=true. Dit stelt je in staat om een opt-in mechanisme te creëren voor bepaalde pods.
+
+```bash
+  chaoskube --annotations 'chaos.alpha.kubernetes.io/enabled=true'
+```
 
 ## Voordelen en uitdagingen
 
@@ -125,6 +196,8 @@ Op het moment dat je Chaos Engineering wilt gaan toepassen, is het belangrijk om
   Deel de resultaten en geleerde lessen van chaosexperimenten met alle belanghebbenden. Bied duidelijke, uitvoerbare inzichten en aanbevelingen op basis van de bevindingen. [Phoenixnap, 2024](https://phoenixnap.com/blog/chaos-engineering)
 
 ## Conclusie
+
+Chaos Engineering is een krachtige methode om de robuustheid en veerkracht van gedistribueerde systemen te testen en te verbeteren. Door het systematisch introduceren van storingen in een Kubernetes-cluster met behulp van tools zoals ChaosKube, kunnen teams zwakke punten in hun infrastructuur identificeren en aanpakken voordat deze problemen veroorzaken in productieomgevingen. Door de resultaten van chaosexperimenten zorgvuldig te analyseren en te gebruiken om de systeemarchitectuur te verbeteren, kunnen teams hun systemen veerkrachtiger maken en de betrouwbaarheid van hun diensten vergroten.
 
 ## Bronnen
 
