@@ -12,12 +12,8 @@ Momenteel ben ik bezig met de minor DevOps, en Chaos Engineering is een van de o
 - [Wordt een "Agent of Chaos" met ChaosKube](#wordt-een-agent-of-chaos-met-chaoskube)
   - [Principes van Chaos Engineering](#principes-van-chaos-engineering)
   - [ChaosKube](#chaoskube)
-    - [Filteren op labels](#filteren-op-labels)
-    - [Filteren op namespaces](#filteren-op-namespaces)
-    - [Filteren op namespace labels](#filteren-op-namespace-labels)
-    - [Filteren op OwnerReference's](#filteren-op-ownerreferences)
-    - [Filteren op pod-namen](#filteren-op-pod-namen)
-    - [Combineren van filters](#combineren-van-filters)
+    - [ChaosKube installeren en uitvoeren](#chaoskube-installeren-en-uitvoeren)
+    - [Toepassen van filters](#toepassen-van-filters)
     - [Opt-in annotaties](#opt-in-annotaties)
   - [Voordelen en uitdagingen](#voordelen-en-uitdagingen)
     - [Voordelen](#voordelen)
@@ -42,6 +38,8 @@ Bij Chaos Engineering voer je dan ook experimenten uit waarover van te voren goe
 ChaosKube is een open-source tool die speciaal is ontworpen voor het uitvoeren van Chaos Engineering-experimenten in Kubernetes-omgevingen. Met ChaosKube kun je eenvoudig storingen simuleren in je Kubernetes-cluster, zodat je kunt testen hoe je applicatie reageert op deze storingen. ChaosKube ondersteunt verschillende soorten storingen, zoals het verwijderen van pods, het introduceren van netwerkvertragingen en het verstoren van de CPU- en geheugenbelasting. [GitHub, 2023](https://github.com/linki/chaoskube/blob/master/README.md)
 
 Maar hoe kan ChaosKube nu precies worden ingezet om de robuustheid en veerkracht van Kubernetes-clusters te testen en te verbeteren? ChaosKube kan geinstalleerd worden door Helm te gebruiken. ([lees hier meer over Helm](https://helm.sh/docs/intro/quickstart/)) ChaosKube kan vervolgens als volgt geinstalleerd worden:
+
+### ChaosKube installeren en uitvoeren
 
 ```console
 helm repo add chaoskube https://linki.github.io/chaoskube/
@@ -72,15 +70,13 @@ Uiteraard heb je ook de vrijheid om ChaosKube te configureren naar jouw wensen. 
 
 Je kunt de zoekruimte van chaoskube beperken door gebruik te maken van verschillende filters, zoals labels, annotaties, namespaces en patronen voor het opnemen of uitsluiten van pod-namen. Dit helpt om gerichter chaos tests uit te voeren.
 
-### Filteren op labels
+### Toepassen van filters
 
-Je kunt pods selecteren op basis van hun labels. Bijvoorbeeld, om alle pods te selecteren met het label app=mate, een willekeurig chaos-label en waarbij stage niet gelijk is aan production.
+Als je ChaosKube wil laten weten dat ChaosKube alleen specifieke pods mag verwijderen, kun je filters meegeven als parameter in de command line. Zo kun je bijvoorbeeld pods selecteren op basis van hun labels. Om alle pods te selecteren met het label app=mate, een willekeurig chaos-label en waarbij stage niet gelijk is aan production, kun je het onderstaande commando uitvoeren:
 
 ```bash
 chaoskube --labels 'app=mate,chaos,stage!=production'
 ```
-
-### Filteren op namespaces
 
 Je kunt ook pods filteren op specifieke namespaces. Bijvoorbeeld, om alleen pods in de default, testing en staging namespaces te targeten.
 
@@ -88,15 +84,11 @@ Je kunt ook pods filteren op specifieke namespaces. Bijvoorbeeld, om alleen pods
 chaoskube --namespaces 'default,testing,staging'
 ```
 
-### Filteren op namespace labels
-
 Als je namespaces wilt uitsluiten op basis van hun labels, zoals het label integration.
 
 ```bash
   chaoskube --namespace-labels '!integration'
 ```
-
-### Filteren op OwnerReference's
 
 Je kunt target pods uitsluiten of selecteren op basis van hun OwnerReference's soort. Bijvoorbeeld, om DaemonSet en StatefulSet pods uit te sluiten of om alleen DaemonSet pods te selecteren.
 
@@ -105,15 +97,11 @@ Je kunt target pods uitsluiten of selecteren op basis van hun OwnerReference's s
   chaoskube --owner-kind 'DaemonSet'
 ```
 
-### Filteren op pod-namen
-
 Je kunt pods filteren op naam. Bijvoorbeeld, om alleen pods te selecteren waarvan de naam 'foo' of 'bar' bevat, en 'prod' te vermijden.
 
 ```bash
   chaoskube --included-pod-names 'foo|bar' --excluded-pod-names 'prod'
 ```
-
-### Combineren van filters
 
 Filters kunnen gecombineerd worden om de zoekruimte verder te beperken. Bijvoorbeeld, om alleen pods te selecteren met bepaalde labels en annotaties, en tegelijkertijd pods uit te sluiten in de kube-system en production namespaces.
 
@@ -127,6 +115,25 @@ Filters kunnen gecombineerd worden om de zoekruimte verder te beperken. Bijvoorb
 ### Opt-in annotaties
 
 Je kunt chaoskube configureren om alleen pods te beëindigen die een specifieke annotatie hebben, zoals chaos.alpha.kubernetes.io/enabled=true. Dit stelt je in staat om een opt-in mechanisme te creëren voor bepaalde pods.
+
+Deze annotatie kan je toevoegen in je .yaml bestanden waar je je pods definieert. Dat kun je als volgt doen:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 3
+  template:
+    metadata:
+      annotations:
+        chaos.alpha.kubernetes.io/enabled: "true"
+    spec:
+      ...
+```
+
+Vervolgens kun je aan ChaosKube vertellen om alleen pods te beëindigen die deze annotatie hebben:
 
 ```bash
   chaoskube --annotations 'chaos.alpha.kubernetes.io/enabled=true'
@@ -156,8 +163,6 @@ ChaosKube biedt verschillende voordelen en uitdagingen bij het gebruik van Chaos
 
 - **Kennis en Ervaring Vereist**: Om ChaosKube effectief in te zetten, moeten teams bekend zijn met zowel Chaos Engineering als Kubernetes. Dit kan een drempel zijn voor teams die weinig ervaring hebben met deze technieken.
 
-- **Beperkte Monitoring en Analyse Capaciteiten**: ChaosKube is primair een tool om storingen te simuleren, maar het biedt beperkte mogelijkheden voor het monitoren van de effecten van deze storingen. Er is vaak aanvullende monitoring en logging nodig om de impact op het systeem volledig te begrijpen.
-
 - **Mogelijke Verlies van System Stability**: Overmatig gebruik van ChaosKube kan leiden tot een verlies van stabiliteit in testomgevingen, wat weer gevolgen kan hebben voor de snelheid en betrouwbaarheid van het ontwikkelingsproces.
 
 ## Resultaten analyseren
@@ -172,7 +177,7 @@ Tot slot kan ChaosKube als continu proces worden ingezet om de robuustheid van d
 
 ## Best practices
 
-Op het moment dat je Chaos Engineering wilt gaan toepassen, is het belangrijk om een aantal best practices te volgen om ervoor te zorgen dat je experimenten effectief en veilig zijn. Hier zijn enkele best practices die je kunt volgen bij het implementeren van Chaos Engineering met een tool als ChaosKube:
+Op het moment dat je Chaos Engineering met ChaosKube wilt gaan toepassen, is het belangrijk om een aantal best practices te volgen om ervoor te zorgen dat je experimenten effectief en veilig zijn. Hier zijn enkele best practices die je kunt volgen bij het implementeren van Chaos Engineering met een tool als ChaosKube:
 
 - **Zorg voor uitgebreide monitoring en observatie:**  
   Robuuste monitoring- en observatietools zorgen ervoor dat chaostests nieuwe inzichten opleveren in plaats van voor de hand liggende uitkomsten. [Phoenixnap, 2024](https://phoenixnap.com/blog/chaos-engineering)
