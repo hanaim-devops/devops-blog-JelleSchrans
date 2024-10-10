@@ -30,14 +30,14 @@ Het doel van Chaos Engineering is om de robuustheid en veerkracht van gedistribu
 Bij Chaos Engineering voer je dan ook experimenten uit waarover van te voren goed is nagedacht. Hierbij voer je onderstaande stappen uit:
 
 1. **Definieer een hypothese**: Bedenk wat er zou moeten gebeuren als er een storing optreedt. [Gremlin, 2023](https://www.gremlin.com/community/tutorials/chaos-engineering-the-history-principles-and-practice#:~:text=Chaos%20Engineering%20is%20a%20disciplined,end%20up%20in%20the%20news.)
-2. **Bepaal de kleinst mogelijke test**: Bepaal wat de kleinste test is (ofwel de blast radius) die je kunt uitvoeren om de hypothese te testen, zodat je meer te weten kunt komen over eventuele problemen. [Gremlin, 2023](https://www.gremlin.com/community/tutorials/chaos-engineering-the-history-principles-and-practice#:~:text=Chaos%20Engineering%20is%20a%20disciplined,end%20up%20in%20the%20news.)
+2. **Bepaal de kleinst mogelijke test**: Bepaal wat de kleinste test is (ofwel de "blast radius") die je kunt uitvoeren om de hypothese te testen, zodat je meer te weten kunt komen over eventuele problemen. Als je je test zo klein mogelijk houdt kom je makkelijker te weten waar eventuele problemen zitten. [Gremlin, 2023](https://www.gremlin.com/community/tutorials/chaos-engineering-the-history-principles-and-practice#:~:text=Chaos%20Engineering%20is%20a%20disciplined,end%20up%20in%20the%20news.)
 3. **Voer het experiment uit**: Voer het experiment uit en observeer de resultaten. Als er geen problemen gevonden worden, kun je de blast radius vergroten tot je wel problemen vindt. [Gremlin, 2023](https://www.gremlin.com/community/tutorials/chaos-engineering-the-history-principles-and-practice#:~:text=Chaos%20Engineering%20is%20a%20disciplined,end%20up%20in%20the%20news.)
 
 ## ChaosKube
 
-ChaosKube is een open-source tool die speciaal is ontworpen voor het uitvoeren van Chaos Engineering-experimenten in Kubernetes-omgevingen. Met ChaosKube kun je eenvoudig storingen simuleren in je Kubernetes-cluster, zodat je kunt testen hoe je applicatie reageert op deze storingen. ChaosKube ondersteunt verschillende soorten storingen, zoals het verwijderen van pods, het introduceren van netwerkvertragingen en het verstoren van de CPU- en geheugenbelasting. [GitHub, 2023](https://github.com/linki/chaoskube/blob/master/README.md)
+ChaosKube is een open-source tool die speciaal is ontworpen voor het uitvoeren van Chaos Engineering-experimenten in Kubernetes-omgevingen. Met ChaosKube kun je eenvoudig storingen simuleren in je Kubernetes-cluster, zodat je kunt testen hoe je applicatie reageert op deze storingen. ChaosKube simuleert deze storingen door na een gegeven periode pods te verwijderen. [GitHub, 2023](https://github.com/linki/chaoskube/blob/master/README.md)
 
-Maar hoe kan ChaosKube nu precies worden ingezet om de robuustheid en veerkracht van Kubernetes-clusters te testen en te verbeteren? ChaosKube kan geinstalleerd worden door Helm te gebruiken. ([lees hier meer over Helm](https://helm.sh/docs/intro/quickstart/)) ChaosKube kan vervolgens als volgt geinstalleerd worden:
+Maar hoe kan ChaosKube nu precies worden ingezet om de robuustheid en veerkracht van Kubernetes-clusters te testen en te verbeteren? ChaosKube kan geinstalleerd worden door Helm te gebruiken. ([lees hier meer over Helm](https://helm.sh/docs/intro/quickstart/)) ChaosKube kan daarna als volgt geinstalleerd worden:
 
 ### ChaosKube installeren en uitvoeren
 
@@ -112,9 +112,11 @@ Filters kunnen gecombineerd worden om de zoekruimte verder te beperken. Bijvoorb
     --namespaces '!kube-system,!production'
 ```
 
+[GitHub, 2023](https://github.com/linki/chaoskube/blob/master/README.md)
+
 ### Opt-in annotaties
 
-Je kunt chaoskube configureren om alleen pods te beëindigen die een specifieke annotatie hebben, zoals chaos.alpha.kubernetes.io/enabled=true. Dit stelt je in staat om een opt-in mechanisme te creëren voor bepaalde pods.
+Je kunt ChaosKube ook configureren om alleen pods te beëindigen die een specifieke annotatie hebben, zoals chaos.alpha.kubernetes.io/enabled=true. Dit stelt je in staat om een opt-in mechanisme te creëren voor bepaalde pods.
 
 Deze annotatie kan je toevoegen in je .yaml bestanden waar je je pods definieert. Dat kun je als volgt doen:
 
@@ -139,6 +141,8 @@ Vervolgens kun je aan ChaosKube vertellen om alleen pods te beëindigen die deze
   chaoskube --annotations 'chaos.alpha.kubernetes.io/enabled=true'
 ```
 
+[GitHub, 2023](https://github.com/linki/chaoskube/blob/master/README.md)
+
 ## Voordelen en uitdagingen
 
 ChaosKube biedt verschillende voordelen en uitdagingen bij het gebruik van Chaos Engineering om de betrouwbaarheid van gedistribueerde systemen te testen. Hieronder worden enkele van de belangrijkste voordelen en uitdagingen van ChaosKube besproken.
@@ -149,10 +153,6 @@ ChaosKube biedt verschillende voordelen en uitdagingen bij het gebruik van Chaos
   
 - **Integratie in CI/CD Pipelines**: ChaosKube kan eenvoudig worden geïntegreerd in bestaande CI/CD-pipelines. Dit maakt het mogelijk om continu te testen en de veerkracht van systemen te verbeteren tijdens elke fase van de softwareontwikkeling.
 
-- **Kostenbesparing**: Omdat ChaosKube gebruik maakt van een lichtgewicht benadering van chaos engineering, kunnen organisaties goedkoop en snel storingen simuleren, zonder dat er dure of complexe infrastructuren voor nodig zijn.
-
-- **Vergroten van System Resilience**: Door willekeurige storingen te simuleren, kunnen zwakke punten in de infrastructuur of systeemarchitectuur worden blootgelegd en aangepakt, wat leidt tot robuustere en veerkrachtigere systemen.
-
 - **Eenvoudige Implementatie**: Het gebruik van ChaosKube is relatief eenvoudig, vooral voor teams die al werken met Kubernetes. Het vereist geen grote veranderingen in de bestaande infrastructuur om te beginnen met het simuleren van storingen.
 
 ### Uitdagingen:
@@ -162,8 +162,6 @@ ChaosKube biedt verschillende voordelen en uitdagingen bij het gebruik van Chaos
 - **Mogelijke Impact op Productieomgevingen**: Het gebruik van ChaosKube kan onbedoeld invloed hebben op productiesystemen, vooral als het niet zorgvuldig wordt ingezet. Een verkeerde configuratie kan leiden tot onbedoelde uitval of verminderde prestaties.
 
 - **Kennis en Ervaring Vereist**: Om ChaosKube effectief in te zetten, moeten teams bekend zijn met zowel Chaos Engineering als Kubernetes. Dit kan een drempel zijn voor teams die weinig ervaring hebben met deze technieken.
-
-- **Mogelijke Verlies van System Stability**: Overmatig gebruik van ChaosKube kan leiden tot een verlies van stabiliteit in testomgevingen, wat weer gevolgen kan hebben voor de snelheid en betrouwbaarheid van het ontwikkelingsproces.
 
 ## Resultaten analyseren
 
@@ -202,7 +200,7 @@ Op het moment dat je Chaos Engineering met ChaosKube wilt gaan toepassen, is het
 
 ## Conclusie
 
-Chaos Engineering is een krachtige methode om de robuustheid en veerkracht van gedistribueerde systemen te testen en te verbeteren. Door het systematisch introduceren van storingen in een Kubernetes-cluster met behulp van tools zoals ChaosKube, kunnen teams zwakke punten in hun infrastructuur identificeren en aanpakken voordat deze problemen veroorzaken in productieomgevingen. Door de resultaten van chaosexperimenten zorgvuldig te analyseren en te gebruiken om de systeemarchitectuur te verbeteren, kunnen teams hun systemen veerkrachtiger maken en de betrouwbaarheid van hun diensten vergroten.
+Chaos Engineering is een krachtige methode om de robuustheid en veerkracht van gedistribueerde systemen te testen en te verbeteren. Door het systematisch introduceren van storingen in een Kubernetes-cluster met behulp van tools zoals ChaosKube, kunnen teams zwakke punten in hun infrastructuur identificeren en aanpakken voordat deze problemen veroorzaken. Door de resultaten van chaosexperimenten zorgvuldig te analyseren en te gebruiken om de systeemarchitectuur te verbeteren, kunnen teams hun systemen veerkrachtiger maken en de betrouwbaarheid van hun diensten vergroten.
 
 ## Bronnen
 
