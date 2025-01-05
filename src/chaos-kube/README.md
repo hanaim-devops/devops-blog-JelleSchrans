@@ -25,7 +25,7 @@ Momenteel ben ik bezig met de minor DevOps, en Chaos Engineering is een van de o
 
 ## Principes van Chaos Engineering
 
-Het doel van Chaos Engineering is om de robuustheid en veerkracht van gedistribueerde systemen te testen en te verbeteren. Dit wordt gedaan door het introduceren van storingen in het systeem en te observeren hoe het systeem reageert op deze storingen. Door het systematisch introduceren van storingen kan worden vastgesteld waar de zwakke punten in het systeem (in dit geval een Kubernetes cluser) zitten en kunnen maatregelen worden genomen om deze zwakke punten te verhelpen voordat deze problemen op kunnen gaan leveren. [Phoenixnap, 2024](https://phoenixnap.com/blog/chaos-engineering)
+Het doel van Chaos Engineering is om de robuustheid en veerkracht van gedistribueerde systemen te testen en te verbeteren. Dit wordt gedaan door het introduceren van storingen in het systeem en te observeren hoe het systeem reageert op deze storingen. Door het systematisch introduceren van storingen kan worden vastgesteld waar de zwakke punten in het systeem (in dit geval een Kubernetes cluser) zitten en kunnen maatregelen worden genomen om deze zwakke punten te verhelpen voordat deze problemen op kunnen gaan leveren. [Kostic N., 2024](https://phoenixnap.com/blog/chaos-engineering)
 
 Bij Chaos Engineering voer je dan ook experimenten uit waarover van te voren goed is nagedacht. Hierbij voer je onderstaande stappen uit:
 
@@ -35,7 +35,7 @@ Bij Chaos Engineering voer je dan ook experimenten uit waarover van te voren goe
 
 ## ChaosKube
 
-ChaosKube is een open-source tool die speciaal is ontworpen voor het uitvoeren van Chaos Engineering-experimenten in Kubernetes-omgevingen. Met ChaosKube kun je eenvoudig storingen simuleren in je Kubernetes-cluster, zodat je kunt testen hoe je applicatie reageert op deze storingen. ChaosKube simuleert deze storingen door na een gegeven periode pods te verwijderen. [GitHub, 2023](https://github.com/linki/chaoskube/blob/master/README.md)
+ChaosKube is een open-source tool die speciaal is ontworpen voor het uitvoeren van Chaos Engineering-experimenten in Kubernetes-omgevingen. Met ChaosKube kun je eenvoudig storingen simuleren in je Kubernetes-cluster, zodat je kunt testen hoe je applicatie reageert op deze storingen. ChaosKube simuleert deze storingen door na een gegeven periode pods te verwijderen. [Linkhorst M., 2023](https://github.com/linki/chaoskube/blob/master/README.md)
 
 Maar hoe kan ChaosKube nu precies worden ingezet om de robuustheid en veerkracht van Kubernetes-clusters te testen en te verbeteren? ChaosKube kan geinstalleerd worden door Helm te gebruiken. ([lees hier meer over Helm](https://helm.sh/docs/intro/quickstart/)) ChaosKube kan daarna als volgt geinstalleerd worden:
 
@@ -112,7 +112,7 @@ Filters kunnen gecombineerd worden om de zoekruimte verder te beperken. Bijvoorb
     --namespaces '!kube-system,!production'
 ```
 
-[GitHub, 2023](https://github.com/linki/chaoskube/blob/master/README.md)
+[Linkhorst M., 2023](https://github.com/linki/chaoskube/blob/master/README.md)
 
 ### Opt-in annotaties
 
@@ -141,7 +141,7 @@ Vervolgens kun je aan ChaosKube vertellen om alleen pods te beëindigen die deze
   chaoskube --annotations 'chaos.alpha.kubernetes.io/enabled=true'
 ```
 
-[GitHub, 2023](https://github.com/linki/chaoskube/blob/master/README.md)
+[Linkhorst M., 2023](https://github.com/linki/chaoskube/blob/master/README.md)
 
 ## Voordelen en uitdagingen
 
@@ -178,25 +178,25 @@ Tot slot kan ChaosKube als continu proces worden ingezet om de robuustheid van d
 Op het moment dat je Chaos Engineering met ChaosKube wilt gaan toepassen, is het belangrijk om een aantal best practices te volgen om ervoor te zorgen dat je experimenten effectief en veilig zijn. Hier zijn enkele best practices die je kunt volgen bij het implementeren van Chaos Engineering met een tool als ChaosKube:
 
 - **Zorg voor uitgebreide monitoring en observatie:**  
-  Robuuste monitoring- en observatietools zorgen ervoor dat chaostests nieuwe inzichten opleveren in plaats van voor de hand liggende uitkomsten. [Phoenixnap, 2024](https://phoenixnap.com/blog/chaos-engineering)
+  Robuuste monitoring- en observatietools zorgen ervoor dat chaostests nieuwe inzichten opleveren in plaats van voor de hand liggende uitkomsten. [Kostic N., 2024](https://phoenixnap.com/blog/chaos-engineering)
 
 - **Begin klein en breid geleidelijk de reikwijdte uit:**  
-  Start met kleine, afgebakende experimenten om risico's te minimaliseren en vertrouwen op te bouwen. Naarmate je team meer vertrouwd raakt met chaos engineering, kun je de omvang en complexiteit van de experimenten geleidelijk uitbreiden. [Phoenixnap, 2024](https://phoenixnap.com/blog/chaos-engineering)
+  Start met kleine, afgebakende experimenten om risico's te minimaliseren en vertrouwen op te bouwen. Naarmate je team meer vertrouwd raakt met chaos engineering, kun je de omvang en complexiteit van de experimenten geleidelijk uitbreiden. [Kostic N., 2024](https://phoenixnap.com/blog/chaos-engineering)
 
 - **Geef prioriteit aan productieomgevingen:**  
-  Chaosexperimenten moeten idealiter in productieomgevingen worden uitgevoerd om de echte wereldomstandigheden zo nauwkeurig mogelijk na te bootsen. Als de risicotolerantie laag is, kan het starten in pre-productieomgevingen helpen om vertrouwen op te bouwen. Het doel moet echter zijn om geleidelijk over te gaan naar productie naarmate het vertrouwen in de experimenten groeit. [Phoenixnap, 2024](https://phoenixnap.com/blog/chaos-engineering)
+  Chaosexperimenten moeten idealiter in productieomgevingen worden uitgevoerd om de echte wereldomstandigheden zo nauwkeurig mogelijk na te bootsen. Als de risicotolerantie laag is, kan het starten in pre-productieomgevingen helpen om vertrouwen op te bouwen. Het doel moet echter zijn om geleidelijk over te gaan naar productie naarmate het vertrouwen in de experimenten groeit. [Kostic N., 2024](https://phoenixnap.com/blog/chaos-engineering)
 
 - **Voorkom onbedoelde verstoringen:**  
-  Om veilig te blijven, implementeer mechanismen om snel terug te draaien en problemen te mitigeren. [Phoenixnap, 2024](https://phoenixnap.com/blog/chaos-engineering)
+  Om veilig te blijven, implementeer mechanismen om snel terug te draaien en problemen te mitigeren. [Kostic N., Phoenixnap, 2024](https://phoenixnap.com/blog/chaos-engineering)
 
 - **Betrek alle belanghebbenden:**  
-  Chaos engineering is het meest effectief wanneer er wordt samengewerkt tussen verschillende teams. Moedig deelname aan van ontwikkelings-, operationele en beveiligingsteams om diverse inzichten te krijgen en de algehele systeembestendigheid te verbeteren. [Phoenixnap, 2024](https://phoenixnap.com/blog/chaos-engineering)
+  Chaos engineering is het meest effectief wanneer er wordt samengewerkt tussen verschillende teams. Moedig deelname aan van ontwikkelings-, operationele en beveiligingsteams om diverse inzichten te krijgen en de algehele systeembestendigheid te verbeteren. [Kostic N., 2024](https://phoenixnap.com/blog/chaos-engineering)
 
 - **Documenteer en analyseer resultaten:**  
-  Leg de opzet, uitvoering en uitkomsten van elk experiment vast. Grondige documentatie en analyse van elk experiment zijn essentieel voor het leren en verbeteren en helpen je de impact van verstoringen te begrijpen en toekomstige experimenten te plannen. [Phoenixnap, 2024](https://phoenixnap.com/blog/chaos-engineering)
+  Leg de opzet, uitvoering en uitkomsten van elk experiment vast. Grondige documentatie en analyse van elk experiment zijn essentieel voor het leren en verbeteren en helpen je de impact van verstoringen te begrijpen en toekomstige experimenten te plannen. [Kostic N., 2024](https://phoenixnap.com/blog/chaos-engineering)
 
 - **Communiceer bevindingen en acties:**  
-  Deel de resultaten en geleerde lessen van chaosexperimenten met alle belanghebbenden. Bied duidelijke, uitvoerbare inzichten en aanbevelingen op basis van de bevindingen. [Phoenixnap, 2024](https://phoenixnap.com/blog/chaos-engineering)
+  Deel de resultaten en geleerde lessen van chaosexperimenten met alle belanghebbenden. Bied duidelijke, uitvoerbare inzichten en aanbevelingen op basis van de bevindingen. [Kostic N., 2024](https://phoenixnap.com/blog/chaos-engineering)
 
 ## Conclusie
 
@@ -204,8 +204,8 @@ Chaos Engineering is een krachtige methode om de robuustheid en veerkracht van g
 
 ## Bronnen
 
-- Medium. (Oct 3, 2023) *Chaos Engineering in Kubernetes: A Guide to Building Scalable and Fault-Tolerant Microservices* <https://romanglushach.medium.com/chaos-engineering-in-kubernetes-a-guide-to-building-scalable-and-fault-tolerant-microservices-d866de2a64ae> (Geraadpleegd op 7 oktober 2024).
-- GitHub. (Oct 31, 2023). *ChaosKube.* <https://github.com/linki/chaoskube/blob/master/README.md> (Geraadpleegd op 7 oktober 2024).
-- Phoenixnap (June 13, 2024) *Chaos Engineering: Definition, Principles, Best Practices* <https://phoenixnap.com/blog/chaos-engineering> (Geraadpleegd op 7 oktober 2024).
+- Glushach M., Medium. (Oct 3, 2023) *Chaos Engineering in Kubernetes: A Guide to Building Scalable and Fault-Tolerant Microservices* <https://romanglushach.medium.com/chaos-engineering-in-kubernetes-a-guide-to-building-scalable-and-fault-tolerant-microservices-d866de2a64ae> (Geraadpleegd op 7 oktober 2024).
+- Linkhorst M., GitHub. (Oct 31, 2023). *ChaosKube.* <https://github.com/linki/chaoskube/blob/master/README.md> (Geraadpleegd op 7 oktober 2024).
+- Kostic N., Phoenixnap (June 13, 2024) *Chaos Engineering: Definition, Principles, Best Practices* <https://phoenixnap.com/blog/chaos-engineering> (Geraadpleegd op 7 oktober 2024).
 - Gremlin (October 12, 2023) *Chaos Engineering: the history, principles, and practice*  <https://www.gremlin.com/community/tutorials/chaos-engineering-the-history-principles-and-practice#:~:text=Chaos%20Engineering%20is%20a%20disciplined,end%20up%20in%20the%20news.> (Geraadpleegd op 7 oktober 2024).
-- Medium (Dec 8, 2023) *Embracing Resilience: A Comprehensive Guide to Chaos Engineering in CI/CD Pipelines* <https://medium.com/@rdasavikash2004/embracing-resilience-a-comprehensive-guide-to-chaos-engineering-in-ci-cd-pipelines-8e7e2a3b856e> (Geraadpleegd op 7 oktober 2024).
+- Vikash R D., Medium (Dec 8, 2023) *Embracing Resilience: A Comprehensive Guide to Chaos Engineering in CI/CD Pipelines* <https://medium.com/@rdasavikash2004/embracing-resilience-a-comprehensive-guide-to-chaos-engineering-in-ci-cd-pipelines-8e7e2a3b856e> (Geraadpleegd op 7 oktober 2024).
