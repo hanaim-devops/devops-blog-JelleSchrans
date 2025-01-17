@@ -1,6 +1,7 @@
 # Wordt een "Agent of Chaos" met ChaosKube
 
-*[Jelle Schrans, oktober 2024.](https://github.com/hanaim-devops/devops-blog-JelleSchrans)*
+_[Jelle Schrans, oktober 2024.](https://github.com/hanaim-devops/devops-blog-JelleSchrans)_
+
 <hr/>
 
 Momenteel ben ik bezig met de minor DevOps, en Chaos Engineering is een van de onderwerpen die daarin voorbij komt. In deze blog ga ik dieper in op wat Chaos Engineering precies inhoudt en hoe ChaosKube kan worden ingezet om Chaos Engineering toe te passen in een Kubernetes-omgeving.
@@ -47,7 +48,7 @@ helm install chaoskube chaoskube/chaoskube --atomic --namespace=chaoskube --crea
 ```
 
 Als je ChaosKube runt in je command line, zal ChaosKube bij default in een willekeurige namespace om de 10 minuten een pod "killen" (oftewel verwijderen). Bij het opstarten van ChaosKube krijg je onderstaande logs te zien:
-  
+
 ```console
 $ chaoskube
 INFO[0000] starting up              dryRun=true interval=10m0s version=v0.21.0
@@ -66,7 +67,7 @@ INFO[4203] terminating pod          name=nginx-701339712-bfh2y namespace=chaosku
 INFO[4804] terminating pod          name=nginx-701339712-51nt8 namespace=chaoskube
 ```
 
-Uiteraard heb je ook de vrijheid om ChaosKube te configureren naar jouw wensen. Zo kun je bijvoorbeeld de namespace waarin ChaosKube actief is aanpassen, de interval waarmee ChaosKube pods verwijdert aanpassen en de pods die ChaosKube verwijdert filteren op basis van labels en annotations. Ook kan je dagen in een week of een jaar en momenten op een dag eruit filteren om het verwijderen van pods te beperken tot wat gewenst is (limit the chaos). [GitHub, 2023](https://github.com/linki/chaoskube/blob/master/README.md)
+Uiteraard heb je ook de vrijheid om ChaosKube te configureren naar jouw wensen. Zo kun je bijvoorbeeld de namespace waarin ChaosKube actief is aanpassen, de interval waarmee ChaosKube pods verwijdert aanpassen en de pods die ChaosKube verwijdert filteren op basis van labels en annotations. Ook kan je dagen in een week of een jaar en momenten op een dag eruit filteren om het verwijderen van pods te beperken tot wat gewenst is (limit the chaos). [Linkhorst M., 2023](https://github.com/linki/chaoskube/blob/master/README.md)
 
 Je kunt de zoekruimte van chaoskube beperken door gebruik te maken van verschillende filters, zoals labels, annotaties, namespaces en patronen voor het opnemen of uitsluiten van pod-namen. Dit helpt om gerichter chaos tests uit te voeren.
 
@@ -114,6 +115,47 @@ Filters kunnen gecombineerd worden om de zoekruimte verder te beperken. Bijvoorb
 
 [Linkhorst M., 2023](https://github.com/linki/chaoskube/blob/master/README.md)
 
+Het is ook mogelijk om via een .yaml bestand aan te geven welke filters je toe wil passen in de ChaosKube pod. Onder de key `args` kun je de bovengenoemde argumenten
+meegeven. Als voorbeeld is een ChaosKube pod in de namespace voor de Pitstop applicatie gebruikt. In dit geval wordt er aangegeven dat de interval 1 minuut moet zijn,
+dat er pods in de `pitstop` namespace verwijderd moeten worden en dat er ook daadwerkelijk pods verwijderd moeten worden door geen dry run uit te voeren.
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: chaoskube
+  namespace: pitstop
+spec:
+  serviceAccountName: chaoskube-sa
+  containers:
+    - name: chaoskube
+      image: ghcr.io/linki/chaoskube:v0.32.0
+      args:
+        - --interval=1m
+        - --namespaces=pitstop
+        - --no-dry-run
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop: ["ALL"]
+```
+
+Na het opstarten van de pod zie je deze als volgt in Docker Desktop verschijnen:
+![chaoskube pod](plaatjes/chaoskube-pod.png)
+
+En zul je op de de eerste regel in de logs zien dat deze filters zijn toegepast:
+![alt text](plaatjes/applied-filters.png)
+
+Als je ter bevestiging wil zien of de pod daadwerkelijk verwijderd is door ChaosKube, kun je met `kubectl get pods -n {namespace}` controleren of dit ook gebeurd is.
+In het onderstaande geval is te zien dat de `sqlserver` pod verwijderd wordt. Kubernetes herkent dit natuurlijk en zoals te zien is wordt er ook meteen
+een nieuwe pod opgestart.
+![alt text](plaatjes/terminate-pod.png)
+
+Het is hierbij natuurlijk wel belangrijk om in de gaten te houden hoe de rest van je services reageert op het feit dat de database er ineens uitvliegt,
+zodat je ook daadwerkelijk kan concluderen of er goed met deze storing wordt omgegaan.
+
 ### Opt-in annotaties
 
 Je kunt ChaosKube ook configureren om alleen pods te beëindigen die een specifieke annotatie hebben, zoals chaos.alpha.kubernetes.io/enabled=true. Dit stelt je in staat om een opt-in mechanisme te creëren voor bepaalde pods.
@@ -131,8 +173,7 @@ spec:
     metadata:
       annotations:
         chaos.alpha.kubernetes.io/enabled: "true"
-    spec:
-      ...
+    spec: ...
 ```
 
 Vervolgens kun je aan ChaosKube vertellen om alleen pods te beëindigen die deze annotatie hebben:
@@ -150,7 +191,6 @@ ChaosKube biedt verschillende voordelen en uitdagingen bij het gebruik van Chaos
 ### Voordelen:
 
 - **Automatisering van Storingssimulaties**: ChaosKube biedt een geautomatiseerde manier om storingen in een Kubernetes-cluster te simuleren. Dit maakt het eenvoudig om herhaaldelijk storingen te introduceren zonder handmatige interventie, wat zorgt voor consistentie in de tests.
-  
 - **Integratie in CI/CD Pipelines**: ChaosKube kan eenvoudig worden geïntegreerd in bestaande CI/CD-pipelines. Dit maakt het mogelijk om continu te testen en de veerkracht van systemen te verbeteren tijdens elke fase van de softwareontwikkeling.
 
 - **Eenvoudige Implementatie**: Het gebruik van ChaosKube is relatief eenvoudig, vooral voor teams die al werken met Kubernetes. Het vereist geen grote veranderingen in de bestaande infrastructuur om te beginnen met het simuleren van storingen.
@@ -204,8 +244,8 @@ Chaos Engineering is een krachtige methode om de robuustheid en veerkracht van g
 
 ## Bronnen
 
-- Glushach M., Medium. (Oct 3, 2023) *Chaos Engineering in Kubernetes: A Guide to Building Scalable and Fault-Tolerant Microservices* <https://romanglushach.medium.com/chaos-engineering-in-kubernetes-a-guide-to-building-scalable-and-fault-tolerant-microservices-d866de2a64ae> (Geraadpleegd op 7 oktober 2024).
-- Linkhorst M., GitHub. (Oct 31, 2023). *ChaosKube.* <https://github.com/linki/chaoskube/blob/master/README.md> (Geraadpleegd op 7 oktober 2024).
-- Kostic N., Phoenixnap (June 13, 2024) *Chaos Engineering: Definition, Principles, Best Practices* <https://phoenixnap.com/blog/chaos-engineering> (Geraadpleegd op 7 oktober 2024).
-- Gremlin (October 12, 2023) *Chaos Engineering: the history, principles, and practice*  <https://www.gremlin.com/community/tutorials/chaos-engineering-the-history-principles-and-practice#:~:text=Chaos%20Engineering%20is%20a%20disciplined,end%20up%20in%20the%20news.> (Geraadpleegd op 7 oktober 2024).
-- Vikash R D., Medium (Dec 8, 2023) *Embracing Resilience: A Comprehensive Guide to Chaos Engineering in CI/CD Pipelines* <https://medium.com/@rdasavikash2004/embracing-resilience-a-comprehensive-guide-to-chaos-engineering-in-ci-cd-pipelines-8e7e2a3b856e> (Geraadpleegd op 7 oktober 2024).
+- Glushach M., Medium. (Oct 3, 2023) _Chaos Engineering in Kubernetes: A Guide to Building Scalable and Fault-Tolerant Microservices_ <https://romanglushach.medium.com/chaos-engineering-in-kubernetes-a-guide-to-building-scalable-and-fault-tolerant-microservices-d866de2a64ae> (Geraadpleegd op 7 oktober 2024).
+- Linkhorst M., GitHub. (Oct 31, 2023). _ChaosKube._ <https://github.com/linki/chaoskube/blob/master/README.md> (Geraadpleegd op 7 oktober 2024).
+- Kostic N., Phoenixnap (June 13, 2024) _Chaos Engineering: Definition, Principles, Best Practices_ <https://phoenixnap.com/blog/chaos-engineering> (Geraadpleegd op 7 oktober 2024).
+- Gremlin (October 12, 2023) _Chaos Engineering: the history, principles, and practice_ <https://www.gremlin.com/community/tutorials/chaos-engineering-the-history-principles-and-practice#:~:text=Chaos%20Engineering%20is%20a%20disciplined,end%20up%20in%20the%20news.> (Geraadpleegd op 7 oktober 2024).
+- Vikash R D., Medium (Dec 8, 2023) _Embracing Resilience: A Comprehensive Guide to Chaos Engineering in CI/CD Pipelines_ <https://medium.com/@rdasavikash2004/embracing-resilience-a-comprehensive-guide-to-chaos-engineering-in-ci-cd-pipelines-8e7e2a3b856e> (Geraadpleegd op 7 oktober 2024).
